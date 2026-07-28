@@ -3,11 +3,12 @@ pipeline {
 
     stages {
 
-        stage('Checkout') {
-            steps {
-                git "https://github.com/Danesh-S-Durgada/DevOps_Emp_leave_management.git"
-            }
+    stage('Checkout') {
+        steps {
+            git branch: 'main',
+                url: 'https://github.com/Danesh-S-Durgada/DevOps_Emp_leave_management.git'
         }
+    }
 
         stage('Backend Setup') {
             steps {
