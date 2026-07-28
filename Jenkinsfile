@@ -1,16 +1,17 @@
 pipeline {
     agent any
 
+    environment {
+        PYTHON = 'C:\\Users\\DANESH\\AppData\\Local\\Programs\\Python\\Python314\\python.exe'
+    }
+
     stages {
 
         stage('Environment Check') {
             steps {
-                bat 'where python'
-                bat 'python --version'
-                bat 'python -m pip --version'
-                bat 'where node'
+                bat '"%PYTHON%" --version'
+                bat '"%PYTHON%" -m pip --version'
                 bat 'node --version'
-                bat 'where npm'
                 bat 'npm --version'
             }
         }
@@ -18,8 +19,8 @@ pipeline {
         stage('Backend Setup') {
             steps {
                 dir('backend') {
-                    bat 'python -m pip install --upgrade pip'
-                    bat 'python -m pip install -r requirements.txt'
+                    bat '"%PYTHON%" -m pip install --upgrade pip'
+                    bat '"%PYTHON%" -m pip install -r requirements.txt'
                 }
             }
         }
@@ -43,7 +44,7 @@ pipeline {
         stage('Backend Validation') {
             steps {
                 dir('backend') {
-                    bat 'python -m py_compile app.py'
+                    bat '"%PYTHON%" -m py_compile app.py'
                 }
             }
         }
@@ -51,17 +52,11 @@ pipeline {
 
     post {
         success {
-            echo '====================================='
-            echo 'BUILD SUCCESSFUL'
-            echo 'Employee Leave Management CI Passed'
-            echo '====================================='
+            echo 'BUILD SUCCESS'
         }
 
         failure {
-            echo '====================================='
             echo 'BUILD FAILED'
-            echo 'Check Console Output for details'
-            echo '====================================='
         }
 
         always {
