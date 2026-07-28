@@ -3,10 +3,23 @@ pipeline {
 
     stages {
 
+        stage('Environment Check') {
+            steps {
+                bat 'where python'
+                bat 'python --version'
+                bat 'python -m pip --version'
+                bat 'where node'
+                bat 'node --version'
+                bat 'where npm'
+                bat 'npm --version'
+            }
+        }
+
         stage('Backend Setup') {
             steps {
                 dir('backend') {
-                    bat 'pip install -r requirements.txt'
+                    bat 'python -m pip install --upgrade pip'
+                    bat 'python -m pip install -r requirements.txt'
                 }
             }
         }
@@ -27,18 +40,10 @@ pipeline {
             }
         }
 
-        stage('Backend Check') {
+        stage('Backend Validation') {
             steps {
                 dir('backend') {
-                    bat 'python --version'
-                }
-            }
-        }
-
-        stage('Frontend Check') {
-            steps {
-                dir('frontend') {
-                    bat 'npm --version'
+                    bat 'python -m py_compile app.py'
                 }
             }
         }
@@ -46,11 +51,17 @@ pipeline {
 
     post {
         success {
-            echo 'Pipeline completed successfully.'
+            echo '====================================='
+            echo 'BUILD SUCCESSFUL'
+            echo 'Employee Leave Management CI Passed'
+            echo '====================================='
         }
 
         failure {
-            echo 'Pipeline failed.'
+            echo '====================================='
+            echo 'BUILD FAILED'
+            echo 'Check Console Output for details'
+            echo '====================================='
         }
 
         always {
