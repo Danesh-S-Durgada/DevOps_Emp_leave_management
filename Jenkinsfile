@@ -3,13 +3,6 @@ pipeline {
 
     stages {
 
-    stage('Checkout') {
-        steps {
-            git branch: 'main',
-                url: 'https://github.com/Danesh-S-Durgada/DevOps_Emp_leave_management.git'
-        }
-    }
-
         stage('Backend Setup') {
             steps {
                 dir('backend') {
@@ -34,20 +27,34 @@ pipeline {
             }
         }
 
-        stage('Run Backend') {
+        stage('Backend Check') {
             steps {
                 dir('backend') {
-                    bat 'start python app.py'
+                    bat 'python --version'
                 }
             }
         }
 
-        stage('Run Frontend') {
+        stage('Frontend Check') {
             steps {
                 dir('frontend') {
-                    bat 'start npm run dev'
+                    bat 'npm --version'
                 }
             }
+        }
+    }
+
+    post {
+        success {
+            echo 'Pipeline completed successfully.'
+        }
+
+        failure {
+            echo 'Pipeline failed.'
+        }
+
+        always {
+            cleanWs()
         }
     }
 }
