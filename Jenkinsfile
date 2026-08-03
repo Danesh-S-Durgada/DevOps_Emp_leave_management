@@ -2,25 +2,33 @@ pipeline {
     agent any
 
     environment {
-        PYTHON = 'python3'
+        PYTHON = "python3"
+        VENV = "venv"
     }
 
     stages {
 
         stage('Environment Check') {
             steps {
-                sh '${PYTHON} --version'
-                sh '${PYTHON} -m pip --version'
-                sh 'node --version'
-                sh 'npm --version'
+                sh '''
+                    python3 --version
+                    python3 -m pip --version
+                    node --version
+                    npm --version
+                '''
             }
         }
 
         stage('Backend Setup') {
             steps {
                 dir('backend') {
-                    sh '${PYTHON} -m pip install --upgrade pip'
-                    sh '${PYTHON} -m pip install -r requirements.txt'
+                    sh '''
+                        python3 -m venv ${VENV}
+                        . ${VENV}/bin/activate
+
+                        python -m pip install --upgrade pip
+                        pip install -r requirements.txt
+                    '''
                 }
             }
         }
@@ -28,7 +36,9 @@ pipeline {
         stage('Frontend Setup') {
             steps {
                 dir('frontend') {
-                    sh 'npm install'
+                    sh '''
+                        npm install
+                    '''
                 }
             }
         }
@@ -36,7 +46,9 @@ pipeline {
         stage('Build Frontend') {
             steps {
                 dir('frontend') {
-                    sh 'npm run build'
+                    sh '''
+                        npm run build
+                    '''
                 }
             }
         }
@@ -44,8 +56,17 @@ pipeline {
         stage('Backend Validation') {
             steps {
                 dir('backend') {
-                    sh '${PYTHON} -m py_compile app.py'
+                    sh '''
+                        . ${VENV}/bin/activate
+                        python -m py_compile app.py
+                    '''
                 }
+            }
+        }
+
+        stage('Pipeline Completed') {
+            steps {
+                echo 'Application Build Completed Successfully'
             }
         }
     }
