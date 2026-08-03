@@ -81,7 +81,9 @@ pipeline {
         }
 
         always {
-            cleanWs()
+            echo 'Workspace preserved for debugging'
+            //cleanWs()
+
         }
     }
 }
