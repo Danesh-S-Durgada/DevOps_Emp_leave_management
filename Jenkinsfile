@@ -37,7 +37,8 @@ pipeline {
             steps {
                 dir('frontend') {
                     sh '''
-                        npm install
+                        npm cache clean --force
+                        npm install --fetch-timeout=600000 --fetch-retries=5
                     '''
                 }
             }
